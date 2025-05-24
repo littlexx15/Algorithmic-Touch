@@ -1,51 +1,22 @@
 # cartoon_utils.py
 
-import torch
-from diffusers import StableDiffusionImg2ImgPipeline
+import cv2
+import numpy as np
 from PIL import Image
 
-MODEL_ID = "runwayml/stable-diffusion-v1-5"
-
-# 1. 选择设备和半精度
-if torch.cuda.is_available():
-    device, torch_dtype = "cuda", torch.float16
-elif torch.backends.mps.is_available():
-    device, torch_dtype = "mps", None
-else:
-    device, torch_dtype = "cpu", None
-
-# 2. 加载管道（只有 CUDA 时才用半精度）
-load_kwargs = {"torch_dtype": torch_dtype} if torch_dtype else {}
-pipe = StableDiffusionImg2ImgPipeline.from_pretrained(MODEL_ID, **load_kwargs)
-pipe = pipe.to(device)
-
-# 3. 开启 slicing 加速
-pipe.enable_attention_slicing()
-pipe.enable_vae_slicing()
-try:
-    pipe.enable_xformers_memory_efficient_attention()
-except Exception:
-    pass  # 没装 xformers 就跳过
-
-def to_cartoon_sd(
-    img: Image.Image,
-    prompt: str = "cute cartoon pastel illustration, flat style, preserve detail",
-    strength: float = 0.25,
-    guidance_scale: float = 8.0,
-    steps: int = 20
-) -> Image.Image:
+def to_cartoon_fast(img_pil: Image.Image,
+                    sigma_s: float = 60,
+                    sigma_r: float = 0.07) -> Image.Image:
     """
-    极致加速的 Img2Img 卡通化：
-    - 分辨率 256×256
-    - num_inference_steps = 20
-    - attention & VAE slicing
+    用 OpenCV 的 stylization 做卡通化/画风转换：
+      - sigma_s 控制保留细节程度（0–200）
+      - sigma_r 控制边缘保留程度（0–1）
+    运行速度极快，纯 CPU 大约 50–100ms/张。
     """
-    init_img = img.convert("RGB").resize((256, 256))
-    out = pipe(
-        prompt=prompt,
-        image=init_img,
-        strength=strength,
-        guidance_scale=guidance_scale,
-        num_inference_steps=steps
-    ).images[0]
-    return out
+    # 1. PIL -> OpenCV BGR
+    bgr = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+    # 2. 卡通化
+    cartoon_bgr = cv2.stylization(bgr, sigma_s=sigma_s, sigma_r=sigma_r)
+    # 3. BGR -> PIL RGB
+    cartoon_rgb = cv2.cvtColor(cartoon_bgr, cv2.COLOR_BGR2RGB)
+    return Image.fromarray(cartoon_rgb)
