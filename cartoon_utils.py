@@ -1,22 +1,33 @@
 # cartoon_utils.py
 
-import cv2
-import numpy as np
+import torch
 from PIL import Image
 
-def to_cartoon_fast(img_pil: Image.Image,
-                    sigma_s: float = 60,
-                    sigma_r: float = 0.07) -> Image.Image:
+# 1. 选择设备
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+# 2. 从 PyTorch Hub 加载 AnimeGANv2 生成器（v2 风格）
+#    'face_paint_512_v2' 对应增强的鲁棒性和风格化
+model = torch.hub.load(
+    "AK391/animegan2-pytorch:main",
+    "generator",
+    pretrained="face_paint_512_v2",
+    device=DEVICE
+)
+# 3. 加载“上色”接口，size=512，保持原图结构
+face2paint = torch.hub.load(
+    "AK391/animegan2-pytorch:main",
+    "face2paint",
+    size=512,
+    device=DEVICE,
+    side_by_side=False
+)
+
+def to_animegan2(img_pil: Image.Image) -> Image.Image:
     """
-    用 OpenCV 的 stylization 做卡通化/画风转换：
-      - sigma_s 控制保留细节程度（0–200）
-      - sigma_r 控制边缘保留程度（0–1）
-    运行速度极快，纯 CPU 大约 50–100ms/张。
+    一键式 AnimeGANv2 二次元动漫化。
+    输入：PIL.Image
+    输出：PIL.Image（512×512）
     """
-    # 1. PIL -> OpenCV BGR
-    bgr = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
-    # 2. 卡通化
-    cartoon_bgr = cv2.stylization(bgr, sigma_s=sigma_s, sigma_r=sigma_r)
-    # 3. BGR -> PIL RGB
-    cartoon_rgb = cv2.cvtColor(cartoon_bgr, cv2.COLOR_BGR2RGB)
-    return Image.fromarray(cartoon_rgb)
+    # 直接调用 face2paint，返回 PIL.Image
+    return face2paint(model, img_pil)

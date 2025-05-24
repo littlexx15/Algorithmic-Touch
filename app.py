@@ -1,34 +1,53 @@
-# app.py
+import io
+import base64
 
-import gradio as gr
-from predict import predict              # 你的皮肤病分类函数
-from cartoon_utils import to_cartoon_fast
+from flask import Flask, render_template, request
+from PIL import Image
 
-with gr.Blocks(title="皮肤病识别＋极速画风转换 Demo") as demo:
-    gr.Markdown("## 上传皮损图片，左侧显示分类结果，右侧显示画风转换结果")
+from predict import predict
+from cartoon_utils import to_animegan2  # 或者你现有的 to_cartoon_fast 等
 
-    with gr.Row():
-        inp     = gr.Image(type="pil", label="上传原图")
-        cls_out = gr.Label(num_top_classes=3, label="分类结果")
-        cart_out= gr.Image(label="画风转换结果")
+app = Flask(__name__)
 
-    # 允许用户调节两个参数，看看不同细节/边缘保留效果
-    sigma_s = gr.Slider(0, 200, value=60, step=10, label="细节保留 (sigma_s)")
-    sigma_r = gr.Slider(0.0, 1.0, value=0.07, step=0.01, label="边缘保留 (sigma_r)")
+def pil_to_dataurl(img: Image.Image) -> str:
+    """把 PIL Image 转成 `<img src="data:image/png;base64,..." />` 用的 DataURL"""
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    b64 = base64.b64encode(buf.getvalue()).decode("ascii")
+    return f"data:image/png;base64,{b64}"
 
-    def full_pipeline(img, s_s, s_r):
-        # 1. 分类
-        res     = predict(img)
-        # 2. OpenCV stylization 卡通化
-        cartoon = to_cartoon_fast(img, sigma_s=s_s, sigma_r=s_r)
-        return res, cartoon
+@app.route("/", methods=["GET"])
+def index():
+    # 第一页：只展示上传表单
+    return render_template("index.html")
 
-    btn = gr.Button("Run")
-    btn.click(
-        fn=full_pipeline,
-        inputs=[inp, sigma_s, sigma_r],
-        outputs=[cls_out, cart_out]
+@app.route("/result", methods=["POST"])
+def result():
+    # 接收上传的文件
+    file = request.files.get("image")
+    if not file:
+        return "未上传图片", 400
+
+    # 1. 打开成 PIL，跑分类
+    img = Image.open(file.stream).convert("RGB")
+    preds = predict(img)   # {'Eczema':0.7, ...}
+
+    # 取 top1 标签
+    label, conf = max(preds.items(), key=lambda x: x[1])
+    conf_pct = round(conf * 100)
+
+    # 2. 生成动漫化图
+    anime_img = to_animegan2(img)  # PIL.Image
+
+    # 3. 转 DataURL 嵌入到 HTML
+    anime_dataurl = pil_to_dataurl(anime_img)
+
+    return render_template(
+        "result.html",
+        label=label,
+        confidence=conf_pct,
+        anime_src=anime_dataurl
     )
 
 if __name__ == "__main__":
-    demo.launch(share=True)
+    app.run(debug=True)
