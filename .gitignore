@@ -1,0 +1,15 @@
+# Python 虚拟环境
+disease/
+
+# 缓存、编译产物
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# 日志、数据库
+*.log
+*.sqlite3
