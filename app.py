@@ -7,7 +7,7 @@ from flask import Flask, render_template, request
 from PIL import Image
 
 from predict import predict
-from cartoon_utils import to_animegan2, to_sketch
+from cartoon_utils import to_sketch
 from disease_info import disease_info
 
 app = Flask(__name__)
@@ -44,11 +44,31 @@ def result():
     label, conf = max(preds.items(), key=lambda x: x[1])
     conf_pct = round(conf * 100)
 
-    # 3. 选择效果：AnimeGANv2 或 简笔画
-    # —— 如果要动漫化：
+    # 3. 渲染方式选一：
+    # ——— AnimeGANv2 二次元化 ———
     # result_img = to_animegan2(img)
-    # —— 如果要简笔画边缘：
-    result_img = to_sketch(img, low_threshold=50, high_threshold=150)
+
+    # ——— 简笔画：固定 3px 粗细 ———
+    # result_img = to_sketch(img, low_threshold=50, high_threshold=150, thickness=3)
+
+    # ——— 简笔画：随机粗细（1～7px） ———
+    # result_img = to_sketch(
+    #     img,
+    #     low_threshold=50,
+    #     high_threshold=150,
+    #     random_thickness=True,
+    #     max_thickness=7
+    # )
+
+    # ——— 简笔画：中心粗、边缘细（半径 40%） ———
+    result_img = to_sketch(
+        img,
+        low_threshold=50,
+        high_threshold=150,
+        thickness=4,
+        center_fade=True,
+        fade_radius=0.4
+    )
 
     # 4. 转成 DataURL
     result_src = pil_to_dataurl(result_img)
