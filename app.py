@@ -8,6 +8,7 @@ from PIL import Image
 
 from predict import predict
 from cartoon_utils import to_animegan2
+from disease_info import disease_info
 
 app = Flask(__name__)
 
@@ -20,37 +21,45 @@ def pil_to_dataurl(img: Image.Image) -> str:
 
 @app.route("/", methods=["GET"])
 def index():
-    # 第一页：上传表单
+    """上传页：只渲染表单"""
     return render_template("index.html")
 
 @app.route("/result", methods=["POST"])
 def result():
-    # 接收上传的文件
+    """结果页：
+    1. 接收上传的图片、跑分类
+    2. 二次元化
+    3. 取文案
+    4. 渲染模板
+    """
     file = request.files.get("image")
     if not file:
         return "未上传图片", 400
 
-    # 1. PIL 打开 & 诊断分类
+    # 分类预测
     img = Image.open(file.stream).convert("RGB")
-    preds = predict(img)   # 返回 dict: {label: prob, ...}
-
-    # 取 top1 标签 和 置信度%
+    preds = predict(img)  # {'Eczema':0.7, ...}
     label, conf = max(preds.items(), key=lambda x: x[1])
     conf_pct = round(conf * 100)
 
-    # 2. AnimeGAN2 动漫化
+    # 二次元化
     anime_img = to_animegan2(img)
+    anime_src = pil_to_dataurl(anime_img)
 
-    # 3. 转 DataURL 嵌入到 HTML
-    anime_dataurl = pil_to_dataurl(anime_img)
+    # 文案
+    info = disease_info.get(label, {
+        "title":       label,
+        "description": "抱歉，暂无此疾病的详细说明。",
+        "tips":        "暂无护理建议。"
+    })
 
     return render_template(
         "result.html",
         label=label,
         confidence=conf_pct,
-        anime_src=anime_dataurl
+        anime_src=anime_src,
+        info=info
     )
 
 if __name__ == "__main__":
-    # debug=True 只在开发时用，生产/部署请去掉
     app.run(debug=True)

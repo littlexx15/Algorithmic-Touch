@@ -1,5 +1,5 @@
 Flask>=2.2.0
-gradio>=3.0
+
 
 torch>=1.13.0
 torchvision>=0.14.0

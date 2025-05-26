@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <title>识别结果</title>
-</head>
-<body>
-  <h1>诊断结果：{{ label }} （{{ confidence }}%）</h1>
-  <h2>二次元动漫化 (512×512)</h2>
-  <img src="{{ anime_src }}" alt="动漫化结果" />
-  <p><a href="/">← 返回上传另一张</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}诊断结果{% endblock %}
+{% block content %}
+<h1>诊断结果：{{ info.title }} （{{ confidence }}%）</h1>
+<section style="border:1px solid #ddd; padding:1em; margin:1em 0;">
+  <h2>{{ info.title }}</h2>
+  <p>{{ info.description }}</p>
+  <h3>温馨护理小建议：</h3>
+  <div class="tips">{{ info.tips }}</div>
+</section>
+<h2>二次元动漫化 (512×512)</h2>
+<img src="{{ anime_src }}" alt="动漫化结果" class="result">
+<p><a href="/">← 返回上传另一张</a></p>
+{% endblock %}

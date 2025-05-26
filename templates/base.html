@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}皮肤病 AI 诊断{% endblock %}</title>
+
+    <!-- Roboto Slab 字体 -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* —— 全局背景画布 —— */
+      /* p5.js 会自动插入一个 <canvas>，下面两条把它铺满、置于最底层、且不拦截点击 */
+      canvas {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 0;
+        pointer-events: none;
+        /* 用 GPU 做模糊，替代 p5.js filter */
+        filter: blur(4px);
+      }
+
+      /* —— 页面主体卡片 —— */
+      #content {
+        position: relative;
+        z-index: 1;           /* 确保内容在画布之上 */
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      }
+
+      /* —— 通用排版 —— */
+      body, h1, h2, h3, p, pre, button {
+        font-family: 'Roboto Slab', serif;
+        color: #333;
+        line-height: 1.6;
+      }
+      form {
+        text-align: center;
+        margin-top: 2em;
+      }
+      input[type="file"] {
+        display: block;
+        margin: 0 auto 1em;
+      }
+      button {
+        background: #E07A5F;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      button:hover {
+        background: #C45A4B;
+      }
+      .result img {
+        max-width: 100%;
+        border-radius: 8px;
+        margin-top: 1em;
+      }
+      .tips {
+        background: #FFF1BF;
+        padding: 15px;
+        border-radius: 4px;
+        white-space: pre-wrap;
+        margin-top: 1em;
+      }
+      a {
+        color: #E07A5F;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="content">
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- 先加载 p5.js，再加载你的背景脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bg.js') }}"></script>
+  </body>
+</html>
