@@ -7,7 +7,7 @@ from flask import Flask, render_template, request
 from PIL import Image
 
 from predict import predict
-from cartoon_utils import to_animegan2
+from cartoon_utils import to_animegan2, to_sketch
 from disease_info import disease_info
 
 app = Flask(__name__)
@@ -28,36 +28,44 @@ def index():
 def result():
     """结果页：
     1. 接收上传的图片、跑分类
-    2. 二次元化
+    2. 二次元化 or 简笔画
     3. 取文案
     4. 渲染模板
     """
     file = request.files.get("image")
     if not file:
-        return "未上传图片", 400
+        return "No image uploaded", 400
 
-    # 分类预测
+    # 1. 打开并转 RGB
     img = Image.open(file.stream).convert("RGB")
-    preds = predict(img)  # {'Eczema':0.7, ...}
+
+    # 2. 分类预测
+    preds = predict(img)                # e.g. {'Eczema':0.7, ...}
     label, conf = max(preds.items(), key=lambda x: x[1])
     conf_pct = round(conf * 100)
 
-    # 二次元化
-    anime_img = to_animegan2(img)
-    anime_src = pil_to_dataurl(anime_img)
+    # 3. 选择效果：AnimeGANv2 或 简笔画
+    # —— 如果要动漫化：
+    # result_img = to_animegan2(img)
+    # —— 如果要简笔画边缘：
+    result_img = to_sketch(img, low_threshold=50, high_threshold=150)
 
-    # 文案
+    # 4. 转成 DataURL
+    result_src = pil_to_dataurl(result_img)
+
+    # 5. 文案信息
     info = disease_info.get(label, {
         "title":       label,
-        "description": "抱歉，暂无此疾病的详细说明。",
-        "tips":        "暂无护理建议。"
+        "description": "Sorry, no detailed description available.",
+        "tips":        "No care tips available."
     })
 
+    # 6. 渲染页面
     return render_template(
         "result.html",
-        label=label,
+        title="Algorithmic Touch",
         confidence=conf_pct,
-        anime_src=anime_src,
+        result_src=result_src,
         info=info
     )
 

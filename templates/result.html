@@ -5,26 +5,27 @@
   <!-- 主标题 -->
   <h1>Algorithmic Touch</h1>
 
-  <!-- 用 grid-container 包裹图片和两栏内容 -->
+  <!-- 网格容器，包含图片与两栏文本 -->
   <div class="grid-container">
-    <!-- 让图片横跨两列 -->
-    <img src="{{ anime_src }}"
-         alt="Anime-style result"
+    <!-- 图片：横跨整行 -->
+    <img src="{{ result_src }}"
+         alt="Result"
          class="result full-span">
 
-    <!-- 左侧 description -->
+    <!-- 左侧：疾病名称与描述 -->
     <div class="description">
       <h2>{{ info.title }}</h2>
       <p>{{ info.description }}</p>
     </div>
 
-    <!-- 右侧 tips -->
+    <!-- 右侧：护理建议 -->
     <div class="tips-column">
       <h3>Warm Care Tips:</h3>
       <div class="tips">{{ info.tips }}</div>
     </div>
   </div>
 
+  <!-- 返回上传链接 -->
   <p style="margin-top:1em;">
     <a href="/">← Upload another image</a>
   </p>
