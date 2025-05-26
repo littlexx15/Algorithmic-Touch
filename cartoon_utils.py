@@ -1,69 +1,73 @@
-# cartoon_utils.py (新增或替换 to_sketch)
-
 import cv2
 import numpy as np
 from PIL import Image
-import random
+import torch
+
+# —— PyTorch Hub 上的 AnimeGANv2 —— #
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+generator = torch.hub.load(
+    "AK391/animegan2-pytorch:main",
+    "generator",
+    pretrained="face_paint_512_v2",
+    device=DEVICE
+)
+face2paint = torch.hub.load(
+    "AK391/animegan2-pytorch:main",
+    "face2paint",
+    size=512,
+    device=DEVICE,
+    side_by_side=False
+)
+
+def to_animegan2(img_pil: Image.Image) -> Image.Image:
+    """
+    一键 AnimeGANv2 二次元动漫化。
+    """
+    return face2paint(generator, img_pil)
+
 
 def to_sketch(
     img_pil: Image.Image,
-    low_threshold: int = 50,
-    high_threshold: int = 150,
-    thickness: int = 1,
-    random_thickness: bool = False,
-    max_thickness: int = 5,
-    center_fade: bool = False,
-    fade_radius: float = 0.5
+    low_thresh: int = 50,
+    high_thresh: int = 150,
+    thick_k: int = 15,
+    thin_k: int = 1,
+    noise_sigma: float = 0.005
 ) -> Image.Image:
     """
-    生成白色边缘＋透明背景的简笔画。
-    参数：
-      low_threshold, high_threshold: Canny 边缘检测阈值
-      thickness: 膨胀核大小（固定模式时）；实际核为 (thickness,thickness)
-      random_thickness: 是否随机粗细
-      max_thickness: 随机模式的最大膨胀核大小
-      center_fade: 是否做中粗外细效果
-      fade_radius: 中心半径比例 (0-1)，越大中心范围越大
-    返回：
-      RGBA 模式的 PIL 图像
+    径向渐变简笔画：
+      - low_thresh/high_thresh: Canny 阈值
+      - thick_k: 中心粗线膨胀核
+      - thin_k: 边缘细线膨胀核
+      - noise_sigma: 随机噪声强度
     """
-    # 1. 转灰度
-    cv_img = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2GRAY)
-    # 2. Canny 边缘
-    edges = cv2.Canny(cv_img, low_threshold, high_threshold)
+    # 1. 灰度 + 边缘检测
+    gray = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2GRAY)
+    edges = cv2.Canny(gray, low_thresh, high_thresh).astype(np.float32) / 255.0
 
-    # 3. 决定膨胀核大小
-    if random_thickness:
-        k = random.randint(1, max_thickness)
-    else:
-        k = max(1, thickness)
-    kernel = np.ones((k, k), np.uint8)
-    edges_thick = cv2.dilate(edges, kernel, iterations=1)
+    h, w = edges.shape
+    ys, xs = np.indices((h, w))
+    cy, cx = h / 2.0, w / 2.0
+    # 归一化距离 (0=center,1=corner)
+    dist = np.sqrt((ys - cy)**2 + (xs - cx)**2)
+    d = dist / dist.max()
 
-    # 4. 如果不做中心渐变，直接用 edges_thick，否则做混合
-    if not center_fade:
-        final_edges = edges_thick
-    else:
-        # 4a. 保留“细”版本
-        edges_thin = edges.copy()
-        h, w = edges.shape
-        # 4b. 计算归一化距离图 dist_norm：中心 (0,0) 到角落 (1,1)
-        yy, xx = np.indices((h, w))
-        cx, cy = w/2, h/2
-        dist = np.sqrt((xx - cx)**2 + (yy - cy)**2)
-        dist_norm = dist / dist.max()  # 0=center, 1=corner
+    # 2. 双尺度膨胀
+    big   = cv2.dilate((edges*255).astype(np.uint8), np.ones((thick_k, thick_k), np.uint8))
+    small = cv2.dilate((edges*255).astype(np.uint8), np.ones((thin_k, thin_k), np.uint8))
+    big   = big.astype(np.float32)   / 255.0
+    small = small.astype(np.float32) / 255.0
 
-        # 4c. 中心半径比例
-        mask_center = dist_norm <= fade_radius
-        # 4d. 合成：中心用厚边，其余用细边
-        final_edges = np.where(mask_center, edges_thick, edges_thin)
+    # 3. 径向插值：中心粗，外缘细
+    final = big * (1 - d) + small * d
 
-    # 5. 构造 RGBA 画布
-    h, w = final_edges.shape
+    # 4. 加随机噪声
+    final = np.clip(final + np.random.randn(h, w) * noise_sigma, 0, 1)
+
+    # 5. 二值化 & 透明画布
+    mask = (final > 0.2).astype(np.uint8)
     canvas = np.zeros((h, w, 4), dtype=np.uint8)
-
-    # 6. 非零像素设为白（包括 alpha）
-    ys, xs = np.nonzero(final_edges)
-    canvas[ys, xs] = [255, 255, 255, 255]
+    ys2, xs2 = np.nonzero(mask)
+    canvas[ys2, xs2] = [255, 255, 255, 255]
 
     return Image.fromarray(canvas, mode="RGBA")
