@@ -1,110 +1,110 @@
 # disease_info.py
 
 """
-每个 key 要与模型输出 label 完全一致，
-value 中包含 "title", "description", "tips" 三个字段，
-其中 description 温柔地解释病因，tips 给出暖心护理建议。
+Each key must exactly match the model’s output label.
+Each value contains three fields: "title", "description", and "tips".
+"description" gently explains the cause, and "tips" offers warm, caring advice.
 """
 
 disease_info = {
     "Acne and Rosacea Photos": {
-        "title": "痘痘与玫瑰痤疮小提示",
+        "title": "Acne & Rosacea Tips",
         "description": (
-            "亲爱的，痘痘和玫瑰痤疮有时会带来小痛小痒，"
-            "它们通常是因为皮肤出油增多或微弱炎症引起的，"
-            "并不是你的错，给自己一点耐心和温柔。"
+            "Dear friend, acne and rosacea can sometimes bring minor pain and itchiness. "
+            "They are usually caused by increased oil production or mild inflammation. "
+            "It’s not your fault—give yourself patience and kindness."
         ),
         "tips": (
-            "• 每天用温水和温和洁面产品轻轻洗脸，陪伴自己慢慢好起来；\n"
-            "• 遇到小红点尽量不要用力挤压，让医师或手边的温柔软膏来照顾它；\n"
-            "• 晚上睡前薄薄地涂抹一点含有水杨酸或杜松果油的舒缓乳；\n"
-            "• 饮食上多吃蔬果和坚果，给身体补充温暖的能量；\n"
-            "• 适时放慢节奏，给皮肤和心情都一个深呼吸。"
+            "• Gently cleanse your face daily with warm water and a mild cleanser, allowing yourself time to heal.\n"
+            "• When you notice small red bumps, avoid squeezing them; let a soothing ointment care for them.\n"
+            "• Before bed, apply a thin layer of calming lotion containing salicylic acid or juniper berry oil.\n"
+            "• Eat more fruits and nuts to nourish your body with warm energy.\n"
+            "• Slow down when you need to—give both your skin and mind a deep, calming breath."
         ),
     },
     "Actinic Keratosis Basal Cell Carcinoma and other Malignant Lesions": {
-        "title": "光化性角化与皮肤健康关怀",
+        "title": "Actinic Keratosis & Skin Health Care",
         "description": (
-            "长期的阳光照射有时会在皮肤上留下一些小变化，"
-            "比如轻微粗糙或小斑点，并不意味着马上有大问题，"
-            "只是提醒我们更加温柔地呵护自己。"
+            "Prolonged sun exposure can sometimes leave small changes on your skin, "
+            "like slight roughness or tiny spots. This doesn’t necessarily indicate a serious problem; "
+            "it’s just a reminder to treat yourself gently."
         ),
         "tips": (
-            "• 出门戴宽边帽、撑太阳伞，给自己一个安心的防护罩；\n"
-            "• 选用宽谱防晒霜（SPF30+），每天轻轻拍一拍，不要忘记耳后和脖颈；\n"
-            "• 定期和皮肤科医生聊聊，及时了解皮肤的小动态；\n"
-            "• 室内也可以摆一盆喜爱的绿植，让室内空气更清新；\n"
-            "• 每晚给自己倒杯温水，泡脚，放松身体，也关爱皮肤深层。"
+            "• Wear a wide-brimmed hat or use an umbrella outdoors to shield yourself.\n"
+            "• Use a broad-spectrum sunscreen (SPF 30+), gently patting it on every day—don’t forget behind your ears and neck.\n"
+            "• Check in regularly with your dermatologist to stay informed about your skin’s condition.\n"
+            "• Keep a potted plant indoors to freshen the air around you.\n"
+            "• Each night, pour yourself a cup of warm water, soak your feet, relax your body, and care for your skin’s deeper layers."
         ),
     },
     "Eczema Photos": {
-        "title": "湿疹温柔关怀",
+        "title": "Gentle Eczema Care",
         "description": (
-            "湿疹有时会让皮肤干燥、瘙痒，就像小花需要水分和阳光，"
-            "你的皮肤也需要更多温和的滋润。"
+            "Eczema can sometimes cause dryness and itchiness. Just as a flower needs water and sunshine, "
+            "your skin needs gentle, soothing moisture."
         ),
         "tips": (
-            "• 每次洗澡后，轻轻拍干皮肤，趁皮肤微湿时涂上保湿霜；\n"
-            "• 选择无香料、无皂基的清洁用品，让皮肤减少摩擦；\n"
-            "• 穿柔软的纯棉衣物，像给自己裹上最温柔的棉被；\n"
-            "• 如果觉得很不舒服，可以涂一小层医生推荐的外用软膏；\n"
-            "• 给自己一点放松时间，泡泡温水脚、做一次轻柔按摩，都能安抚身心。"
+            "• After every bath, gently pat your skin dry and apply moisturizer while it’s still slightly damp.\n"
+            "• Choose fragrance-free, soap-free cleansers to minimize irritation.\n"
+            "• Wear soft, 100% cotton clothing—as if wrapping yourself in the gentlest blanket.\n"
+            "• If you’re uncomfortable, apply a thin layer of doctor-recommended ointment.\n"
+            "• Give yourself relaxing moments—soak your feet in warm water or enjoy a gentle massage to soothe skin and mind."
         ),
     },
     "Exanthems and Drug Eruptions": {
-        "title": "皮疹与温馨提示",
+        "title": "Rash & Warm Tips",
         "description": (
-            "有时候身体会用皮疹向我们发出小小的提示，"
-            "可能是对新药物或食物敏感，也可能是轻微的不适信号。"
+            "Sometimes your body uses a rash to send you a small warning—"
+            "it may be a reaction to new medication or food, or simply a mild discomfort signal."
         ),
         "tips": (
-            "• 如果刚开始用新药出现皮疹，先停用并和医生聊聊；\n"
-            "• 用清水或温和的喷雾喷一喷，让皮肤得到片刻清凉；\n"
-            "• 可以吃一点抗组胺小药片，轻轻缓解痒感；\n"
-            "• 贴一块舒缓贴片或者敷一片冻毛巾，给自己一点安心；\n"
-            "• 如果全身不舒服，一定要及时就医，让医生给你最贴心的关怀。"
+            "• If a rash appears after starting a new medication, stop use and consult your doctor.\n"
+            "• Spritz your skin with water or a gentle mist for a moment of cool relief.\n"
+            "• You may take an antihistamine pill to ease itching.\n"
+            "• Apply a soothing patch or place a cool compress on the area for comfort.\n"
+            "• If you feel unwell overall, seek medical attention promptly for attentive care."
         ),
     },
     "Herpes HPV and other STDs Photos": {
-        "title": "疱疹与 HPV 关怀",
+        "title": "Herpes & HPV Care",
         "description": (
-            "疱疹和 HPV 有时会在我们最在意的地方出现，让人感到不安，"
-            "但它们并不会定义你，及时处理和关爱自己最重要。"
+            "Herpes and HPV can sometimes appear in sensitive areas, causing anxiety—"
+            "but they do not define you. Timely care and self-compassion are most important."
         ),
         "tips": (
-            "• 保持局部清洁干燥，如同给花朵换新鲜的水分；\n"
-            "• 在医生指导下使用抗病毒药膏或口服药物；\n"
-            "• 与伴侣诚实沟通，戴好安全套，为彼此的健康加把锁；\n"
-            "• 可以做一些深呼吸和放松，让心情也得到安抚；\n"
-            "• 定期到门诊复查，给自己多一点安心。"
+            "• Keep the affected area clean and dry, as if giving a flower fresh water.\n"
+            "• Use antiviral ointments or oral medication under your doctor’s guidance.\n"
+            "• Communicate honestly with your partner and use protection, such as condoms.\n"
+            "• Practice deep breathing or relaxation techniques to calm your mind.\n"
+            "• Schedule regular check-ups for added peace of mind."
         ),
     },
     "Melanoma Skin Cancer Nevi and Moles": {
-        "title": "痣与皮肤健康陪伴",
+        "title": "Moles & Skin Health Companion",
         "description": (
-            "大多数痣都是可爱的“护身符”，偶尔它们也会发生变化，"
-            "这只是身体在和我们说：让我也休息一下。"
+            "Most moles are harmless “protective charms,” but occasionally they may change—"
+            "this is your body’s way of saying, “Let me rest too.”"
         ),
         "tips": (
-            "• 每月自检痣的形状、大小和颜色，就像在给老朋友拍张照片；\n"
-            "• 出门防晒做足功课，让阳光变成温暖拥抱而不是刺激；\n"
-            "• 发现变化时，带着温柔的好奇心去找医生聊聊；\n"
-            "• 用一杯花草茶放松身心，让身体和心情都被呵护；\n"
-            "• 定期体检，把健康当作给自己最好的礼物。"
+            "• Examine your moles monthly for changes in shape, size, or color—like taking a photo of an old friend.\n"
+            "• Apply sun protection diligently to turn sunlight into a warm embrace rather than a stressor.\n"
+            "• If you notice changes, approach your doctor with caring curiosity.\n"
+            "• Soothe yourself with a cup of herbal tea to nurture both body and mind.\n"
+            "• Keep regular health check-ups as the best gift you can give yourself."
         ),
     },
     "Nail Fungus and other Nail Disease": {
-        "title": "甲板健康小暖心",
+        "title": "Nail Health Soothing Tips",
         "description": (
-            "指（趾）甲偶尔会出现暗沉或变厚，就像老树的年轮，"
-            "它在告诉你需要一点额外的关爱。"
+            "Your fingernails or toenails may sometimes appear dull or thick—like the rings of a tree—"
+            "telling you they need a little extra care."
         ),
         "tips": (
-            "• 保持手足部清洁，剪去旧角质，就像换一双新袜子；\n"
-            "• 穿透气的鞋袜，让脚趾自由呼吸；\n"
-            "• 医生可能会建议涂抹抗真菌药膏或口服小药片；\n"
-            "• 不要共用指（趾）甲刀，让健康成为你的专属；\n"
-            "• 给自己一些温和的脚部按摩，放松一天的疲惫。"
+            "• Keep your hands and feet clean and trim away old keratin layers, like putting on fresh socks.\n"
+            "• Wear breathable shoes and socks to let your toes breathe freely.\n"
+            "• Your doctor may recommend topical antifungal creams or oral medication.\n"
+            "• Avoid sharing nail clippers to keep your health personal.\n"
+            "• Give yourself a gentle foot massage to relax after a long day."
         ),
     },
 }

@@ -2,7 +2,7 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}皮肤病 AI 诊断{% endblock %}</title>
+    <title>{% block title %}Algorithmic Touch{% endblock %}</title>
 
     <!-- Roboto Slab 字体 -->
     <link
@@ -23,10 +23,10 @@
         filter: blur(4px);
       }
 
-      /* —— 页面主体卡片 —— 透明背景+居中文本+白字 —— */
+      /* —— 页面主体区 —— 透明背景 + 居中文本 + 白字 —— */
       #content {
         position: relative;
-        z-index: 1;           /* 确保内容在画布之上 */
+        z-index: 1;
         max-width: 800px;
         margin: 40px auto;
         padding: 20px;
@@ -34,13 +34,13 @@
         border-radius: 0;
         box-shadow: none;
         text-align: center;
-        color: #fff;          /* 全部文字变白 */
+        color: #fff;
       }
 
       /* —— 通用排版 —— */
       body, h1, h2, h3, p, pre, button {
         font-family: 'Roboto Slab', serif;
-        color: inherit;       /* 继承 #content 的白色 */
+        color: inherit;
         line-height: 1.6;
       }
       form {
@@ -63,22 +63,28 @@
       button:hover {
         background: #C45A4B;
       }
-      .result img {
+
+      /* —— 结果页图片 —— */
+      .result {
+        display: block;
+        margin: 1em auto;
         max-width: 100%;
-        border-radius: 8px;
-        margin-top: 1em;
+        height: auto;
       }
+
+      /* —— Warm Care Tips 样式 —— */
       .tips {
         background: transparent;
-        padding: none;
-        border: none; 
+        padding: 0;
+        border: none;
         margin-top: 1em;
         white-space: pre-wrap;
-        margin-top: 1em;
         display: inline-block;
         text-align: left;
         color: inherit;
       }
+
+      /* —— 链接样式 —— */
       a {
         color: #E07A5F;
         text-decoration: none;
@@ -87,9 +93,9 @@
         text-decoration: underline;
       }
 
-      /* —— File input 也用白字 & 自定义按钮 —— */
+      /* —— File input —— */
       #content input[type="file"] {
-        color: #fff;          /* “未选择任何文件” 文字变白 */
+        color: #fff;
       }
       #content input[type="file"]::file-selector-button {
         background: #E07A5F;
@@ -104,6 +110,39 @@
       #content input[type="file"]::file-selector-button:hover {
         background: #C45A4B;
       }
+
+      /* —— 结果页两栏网格布局 —— */
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 2em;
+        align-items: start;
+        margin-top: 2em;
+      }
+      .grid-container .full-span {
+        grid-column: 1 / -1;
+        width: 100%;
+        display: block;
+        margin: 0 auto;
+      }
+      .grid-container .description h2,
+      .grid-container .description p {
+        text-align: left;
+        margin: 0 0 1em;
+      }
+      .grid-container .tips-column h3 {
+        margin-bottom: 0.5em;
+        text-align: left;
+      }
+      .grid-container .tips-column .tips {
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: inherit;
+        white-space: pre-wrap;
+        text-align: left;
+        line-height: 1.6;
+      }
     </style>
   </head>
 
@@ -112,7 +151,7 @@
       {% block content %}{% endblock %}
     </div>
 
-    <!-- 先加载 p5.js，再加载你的背景脚本 -->
+    <!-- 先加载 p5.js，再加载背景动画脚本 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
     <script src="{{ url_for('static', filename='js/bg.js') }}"></script>
   </body>

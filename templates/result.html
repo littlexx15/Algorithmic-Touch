@@ -1,21 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Diagnosis Result{% endblock %}
+{% block title %}Algorithmic Touch{% endblock %}
 
 {% block content %}
-  <h1>Diagnosis Result: {{ info.title }} ({{ confidence }}%)</h1>
+  <!-- 主标题 -->
+  <h1>Algorithmic Touch</h1>
 
-  <!-- 疾病标题与描述 -->
-  <h2>{{ info.title }}</h2>
-  <p>{{ info.description }}</p>
+  <!-- 用 grid-container 包裹图片和两栏内容 -->
+  <div class="grid-container">
+    <!-- 让图片横跨两列 -->
+    <img src="{{ anime_src }}"
+         alt="Anime-style result"
+         class="result full-span">
 
-  <!-- 温馨护理小建议（无背景框） -->
-  <h3>Warm Care Tips:</h3>
-  <div class="tips">
-    {{ info.tips }}
+    <!-- 左侧 description -->
+    <div class="description">
+      <h2>{{ info.title }}</h2>
+      <p>{{ info.description }}</p>
+    </div>
+
+    <!-- 右侧 tips -->
+    <div class="tips-column">
+      <h3>Warm Care Tips:</h3>
+      <div class="tips">{{ info.tips }}</div>
+    </div>
   </div>
-
-  <!-- 直接展示动漫化图，无二次元小标题 -->
-  <img src="{{ anime_src }}" alt="Anime-style result" class="result">
 
   <p style="margin-top:1em;">
     <a href="/">← Upload another image</a>
