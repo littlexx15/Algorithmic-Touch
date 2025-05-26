@@ -5,7 +5,7 @@ from flask import Flask, render_template, request
 from PIL import Image
 
 from predict import predict
-from cartoon_utils import to_sketch  # 调用上面径向渐变版本
+from cartoon_utils import to_sketch  # 调用你写的径向渐变简笔画
 from disease_info import disease_info
 
 app = Flask(__name__)
@@ -40,9 +40,12 @@ def result():
     # 1. 打开并转 RGB
     img = Image.open(file.stream).convert("RGB")
 
-    # 2. 皮肤病分类
+    # 2. 皮肤病分类：predict 返回的是完整的 {label: prob, ...}
     preds = predict(img)
+    print("DEBUG all preds:", preds)   # 在终端查看全部输出
+    # pick the best
     label, conf = max(preds.items(), key=lambda x: x[1])
+    print(f"DEBUG chosen label={label!r}, conf={conf:.4f}")
     conf_pct = round(conf * 100)
 
     # 3. 生成简笔画
@@ -55,19 +58,16 @@ def result():
         noise_sigma=0.005,
         bin_thresh=0.5,
         r_ratio=0.5,     # 过渡半径比例
-        sigma_ratio= 1.0  # 模糊强度比例
-
+        sigma_ratio=1.0  # 模糊强度比例
     )
 
     # 4. 转成 DataURL
     result_src = pil_to_dataurl(result_img)
 
     # 5. 文案信息
-    info = disease_info.get(label, {
-        "title":       label,
-        "description": "Sorry, no detailed description available.",
-        "tips":        "No care tips available."
-    })
+    if label not in disease_info:
+        raise ValueError(f"Unknown label {label!r}; check your disease_info keys")
+    info = disease_info[label]
 
     # 6. 渲染页面
     return render_template(
