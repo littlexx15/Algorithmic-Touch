@@ -48,11 +48,15 @@ def result():
     # 3. 生成简笔画
     result_img = to_sketch(
         img,
-        low_thresh=50,
+        low_thresh=80,
         high_thresh=150,
-        thick_k=7,
-        thin_k=3,
-        noise_sigma=0.02
+        thick_k=5,
+        thin_k=2,
+        noise_sigma=0.005,
+        bin_thresh=0.5,
+        r_ratio=0.5,     # 过渡半径比例
+        sigma_ratio= 1.0  # 模糊强度比例
+
     )
 
     # 4. 转成 DataURL
