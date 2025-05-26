@@ -1,9 +1,17 @@
 {% extends "base.html" %}
-{% block title %}上传皮损照片{% endblock %}
+{% block title %}Algorithmic Touch{% endblock %}
+
 {% block content %}
-<h1>上传皮损照片</h1>
-<form action="/result" method="post" enctype="multipart/form-data">
-  <input type="file" name="image" accept="image/*" required>
-  <button type="submit">提交</button>
-</form>
+  <h1>Algorithmic Touch</h1>
+  <p>Please upload a skin lesion image:</p>
+  <form action="/result" method="post" enctype="multipart/form-data">
+    <!-- lang="en" 强制此 input 用英文 -->
+    <input type="file" 
+    name="image" 
+    accept="image/*" 
+    required
+    lang="en"
+    >
+    <button type="submit">Upload</button>
+  </form>
 {% endblock %}

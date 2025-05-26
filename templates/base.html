@@ -12,7 +12,6 @@
 
     <style>
       /* —— 全局背景画布 —— */
-      /* p5.js 会自动插入一个 <canvas>，下面两条把它铺满、置于最底层、且不拦截点击 */
       canvas {
         position: fixed !important;
         top: 0;
@@ -21,26 +20,27 @@
         height: 100vh !important;
         z-index: 0;
         pointer-events: none;
-        /* 用 GPU 做模糊，替代 p5.js filter */
         filter: blur(4px);
       }
 
-      /* —— 页面主体卡片 —— */
+      /* —— 页面主体卡片 —— 透明背景+居中文本+白字 —— */
       #content {
         position: relative;
         z-index: 1;           /* 确保内容在画布之上 */
         max-width: 800px;
         margin: 40px auto;
         padding: 20px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        text-align: center;
+        color: #fff;          /* 全部文字变白 */
       }
 
       /* —— 通用排版 —— */
       body, h1, h2, h3, p, pre, button {
         font-family: 'Roboto Slab', serif;
-        color: #333;
+        color: inherit;       /* 继承 #content 的白色 */
         line-height: 1.6;
       }
       form {
@@ -69,11 +69,15 @@
         margin-top: 1em;
       }
       .tips {
-        background: #FFF1BF;
-        padding: 15px;
-        border-radius: 4px;
+        background: transparent;
+        padding: none;
+        border: none; 
+        margin-top: 1em;
         white-space: pre-wrap;
         margin-top: 1em;
+        display: inline-block;
+        text-align: left;
+        color: inherit;
       }
       a {
         color: #E07A5F;
@@ -81,6 +85,24 @@
       }
       a:hover {
         text-decoration: underline;
+      }
+
+      /* —— File input 也用白字 & 自定义按钮 —— */
+      #content input[type="file"] {
+        color: #fff;          /* “未选择任何文件” 文字变白 */
+      }
+      #content input[type="file"]::file-selector-button {
+        background: #E07A5F;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: 'Roboto Slab', serif;
+        font-size: 1rem;
+      }
+      #content input[type="file"]::file-selector-button:hover {
+        background: #C45A4B;
       }
     </style>
   </head>
