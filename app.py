@@ -1,55 +1,65 @@
 import io
 import base64
-
+from PIL import Image, ImageOps
 from flask import Flask, render_template, request
-from PIL import Image
 
-from predict import predict
-from cartoon_utils import to_sketch  # 调用你写的径向渐变简笔画
-from disease_info import disease_info
+from models.predict import predict
+from utils.sketch_effects import to_sketch
+from utils.disease_info import disease_info
 
 app = Flask(__name__)
 
 def pil_to_dataurl(img: Image.Image) -> str:
-    """
-    把 PIL Image 转成 <img src="data:image/png;base64,..." /> 所需的 DataURL
-    """
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     b64 = base64.b64encode(buf.getvalue()).decode("ascii")
     return f"data:image/png;base64,{b64}"
 
+def crop_and_resize(img: Image.Image,
+                    target_ratio: float = 3/2,
+                    width: int = 600) -> Image.Image:
+    """
+    将 img 裁剪到 target_ratio（宽/高），再缩放到给定宽度。
+    """
+    w, h = img.size
+    current_ratio = w / h
+
+    # 裁剪中心区域
+    if current_ratio > target_ratio:
+        # 太宽：左右裁
+        new_w = int(h * target_ratio)
+        left = (w - new_w) // 2
+        img = img.crop((left, 0, left + new_w, h))
+    else:
+        # 太高：上下裁
+        new_h = int(w / target_ratio)
+        top = (h - new_h) // 2
+        img = img.crop((0, top, w, top + new_h))
+
+    # 缩放到目标宽度
+    new_h = int(width / target_ratio)
+    return img.resize((width, new_h), Image.LANCZOS)
+
 @app.route("/", methods=["GET"])
 def index():
-    """上传页：只渲染表单"""
     return render_template("index.html")
 
 @app.route("/result", methods=["POST"])
 def result():
-    """
-    结果页流程：
-      1. 接收上传的图片并分类
-      2. 生成简笔画
-      3. 获取文案
-      4. 渲染模板
-    """
     file = request.files.get("image")
     if not file:
         return "No image uploaded", 400
 
-    # 1. 打开并转 RGB
+    # 打开并转 RGB
     img = Image.open(file.stream).convert("RGB")
 
-    # 2. 皮肤病分类：predict 返回的是完整的 {label: prob, ...}
+    # 预测分类
     preds = predict(img)
-    print("DEBUG all preds:", preds)   # 在终端查看全部输出
-    # pick the best
     label, conf = max(preds.items(), key=lambda x: x[1])
-    print(f"DEBUG chosen label={label!r}, conf={conf:.4f}")
     conf_pct = round(conf * 100)
 
-    # 3. 生成简笔画
-    result_img = to_sketch(
+    # 生成简笔画
+    sketch = to_sketch(
         img,
         low_thresh=80,
         high_thresh=150,
@@ -57,26 +67,30 @@ def result():
         thin_k=2,
         noise_sigma=0.005,
         bin_thresh=0.5,
-        r_ratio=0.5,     # 过渡半径比例
-        sigma_ratio=1.0  # 模糊强度比例
+        r_ratio=0.5,
+        sigma_ratio=1.0
     )
 
-    # 4. 转成 DataURL
-    result_src = pil_to_dataurl(result_img)
+    # 裁剪＋缩放到 600×400 (3:2)
+    sketch = crop_and_resize(sketch, target_ratio=3/2, width=600)
 
-    # 5. 文案信息
-    if label not in disease_info:
-        raise ValueError(f"Unknown label {label!r}; check your disease_info keys")
-    info = disease_info[label]
+    # 转 DataURL
+    result_src = pil_to_dataurl(sketch)
 
-    # 6. 渲染页面
+    # 获取文案
+    info = disease_info.get(label, {
+        "title":       label,
+        "description": "暂无描述。",
+        "tips":        "暂无建议。"
+    })
+
     return render_template(
         "result.html",
-        title="Algorithmic Touch",
         confidence=conf_pct,
         result_src=result_src,
         info=info
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # 监听 8000 端口，任意网络地址
+    app.run(host="0.0.0.0", port=8000, debug=True)

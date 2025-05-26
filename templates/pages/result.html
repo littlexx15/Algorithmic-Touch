@@ -1,18 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Algorithmic Touch{% endblock %}
+{% block title %}结果 — Algorithmic Touch{% endblock %}
 
 {% block content %}
-  <!-- 主标题 -->
   <h1>Algorithmic Touch</h1>
 
-  <!-- 网格容器，包含图片与两栏文本 -->
   <div class="grid-container">
-    <!-- 图片：横跨整行 -->
+    <!-- 横跨整行的预览图 -->
     <img src="{{ result_src }}"
-         alt="Result"
+         alt="Sketch Result"
          class="result full-span">
 
-    <!-- 左侧：疾病名称与描述 -->
+    <!-- 左侧：疾病名称＋描述 -->
     <div class="description">
       <h2>{{ info.title }}</h2>
       <p>{{ info.description }}</p>
@@ -25,8 +23,7 @@
     </div>
   </div>
 
-  <!-- 返回上传链接 -->
-  <p style="margin-top:1em;">
-    <a href="/">← Upload another image</a>
+  <p style="margin-top:2vh;">
+    <a href="{{ url_for('index') }}">← 再传一张</a>
   </p>
 {% endblock %}

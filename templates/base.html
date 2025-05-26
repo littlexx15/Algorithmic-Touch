@@ -2,6 +2,8 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8" />
+    <!-- 移动端适配，viewport-fit=cover 让全屏画布铺满刘海屏 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
     <title>{% block title %}Algorithmic Touch{% endblock %}</title>
 
     <!-- Roboto Slab 字体 -->
@@ -11,147 +13,80 @@
     />
 
     <style>
-      /* —— 全局背景画布 —— */
+      /* —— 全局 Reset & 全屏 —— */
+      * { margin:0; padding:0; box-sizing:border-box; }
+      html, body { width:100vw; height:100vh; overflow:hidden; font-size:16px; }
+      /* —— 背景动画画布铺满 —— */
       canvas {
-        position: fixed !important;
-        top: 0;
-        left: 0;
-        width: 100vw !important;
-        height: 100vh !important;
-        z-index: 0;
-        pointer-events: none;
-        filter: blur(4px);
+        position:fixed!important; top:0; left:0;
+        width:100vw!important; height:100vh!important;
+        z-index:0; pointer-events:none; filter:blur(4px);
       }
-
-      /* —— 页面主体区 —— 透明背景 + 居中文本 + 白字 —— */
+      /* —— 主内容区：撑满剩余空间，可滚动 —— */
       #content {
-        position: relative;
-        z-index: 1;
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 20px;
-        background: transparent;
-        border-radius: 0;
-        box-shadow: none;
-        text-align: center;
-        color: #fff;
+        position:relative; z-index:1;
+        display:flex; flex-direction:column;
+        align-items:center; justify-content:flex-start;
+        width:100%; height:100%; padding:2vh 2vw;
+        overflow-y:auto; color:#fff;
+        font-family:'Roboto Slab', serif;
+        background:transparent;
       }
-
-      /* —— 通用排版 —— */
-      body, h1, h2, h3, p, pre, button {
-        font-family: 'Roboto Slab', serif;
-        color: inherit;
-        line-height: 1.6;
+      /* —— 版心最大宽度 —— */
+      .container {
+        width:100%; max-width:1200px;
       }
-      form {
-        text-align: center;
-        margin-top: 2em;
-      }
-      input[type="file"] {
-        display: block;
-        margin: 0 auto 1em;
-      }
+      /* —— 标题排版 —— */
+      h1 { font-size:2.5rem; margin-bottom:1rem; }
+      h2 { font-size:1.75rem; margin-bottom:.75rem; }
+      h3 { font-size:1.25rem; margin-bottom:.5rem; }
+      p, li { font-size:1rem; line-height:1.6; }
+      /* —— 上传表单 —— */
+      form { text-align:center; margin-top:2vh; }
+      input[type="file"] { margin-bottom:1.5vh; }
       button {
-        background: #E07A5F;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        border-radius: 4px;
+        background:#E07A5F; color:#fff; border:none;
+        padding:.75rem 1.5rem; font-size:1rem;
+        border-radius:4px; cursor:pointer;
       }
-      button:hover {
-        background: #C45A4B;
-      }
-
-      /* —— 结果页图片 —— */
-      .result {
-        display: block;
-        margin: 1em auto;
-        max-width: 100%;
-        height: auto;
-      }
-
-      /* —— Warm Care Tips 样式 —— */
-      .tips {
-        background: transparent;
-        padding: 0;
-        border: none;
-        margin-top: 1em;
-        white-space: pre-wrap;
-        display: inline-block;
-        text-align: left;
-        color: inherit;
-      }
-
-      /* —— 链接样式 —— */
-      a {
-        color: #E07A5F;
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-
-      /* —— File input —— */
-      #content input[type="file"] {
-        color: #fff;
-      }
-      #content input[type="file"]::file-selector-button {
-        background: #E07A5F;
-        color: #fff;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-family: 'Roboto Slab', serif;
-        font-size: 1rem;
-      }
-      #content input[type="file"]::file-selector-button:hover {
-        background: #C45A4B;
-      }
-
-      /* —— 结果页两栏网格布局 —— */
+      button:hover { background:#C45A4B; }
+      /* —— 结果页网格 —— */
       .grid-container {
-        display: grid;
-        grid-template-columns: 1fr 3fr;
-        gap: 2em;
-        align-items: start;
-        margin-top: 2em;
+        display:grid; grid-template-columns:1fr 2fr;
+        gap:2vw; margin-top:3vh; width:100%;
       }
-      .grid-container .full-span {
-        grid-column: 1 / -1;
-        width: 100%;
-        display: block;
-        margin: 0 auto;
+      .full-span { grid-column:1 / -1; }
+      /* —— 图片自适应 —— */
+      .result {
+        width:100%; height:auto; max-height:50vh;
+        object-fit:cover; object-position:center;
       }
-      .grid-container .description h2,
-      .grid-container .description p {
-        text-align: left;
-        margin: 0 0 1em;
+      /* —— 文本区 —— */
+      .description, .tips-column {
+        background:transparent;
+        padding:1.5vw; border-radius:8px;
       }
-      .grid-container .tips-column h3 {
-        margin-bottom: 0.5em;
-        text-align: left;
-      }
-      .grid-container .tips-column .tips {
-        background: transparent;
-        border: none;
-        padding: 0;
-        color: inherit;
-        white-space: pre-wrap;
-        text-align: left;
-        line-height: 1.6;
+      .tips-column .tips { white-space:pre-wrap; }
+      /* —— 链接回到上传页 —— */
+      a { color:#E07A5F; text-decoration:none; font-size:0.9rem; }
+      a:hover { text-decoration:underline; }
+      /* —— 小屏自动变单列 —— */
+      @media (max-width:768px) {
+        .grid-container { grid-template-columns:1fr; }
+        h1 { font-size:2rem; }
+        h2 { font-size:1.5rem; }
       }
     </style>
   </head>
 
   <body>
     <div id="content">
-      {% block content %}{% endblock %}
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
     </div>
 
-    <!-- 先加载 p5.js，再加载背景动画脚本 -->
+    <!-- 背景动画依赖 p5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
     <script src="{{ url_for('static', filename='js/bg.js') }}"></script>
   </body>
