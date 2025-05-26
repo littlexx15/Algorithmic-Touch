@@ -1,48 +1,17 @@
 import io
-import base64
-from PIL import Image, ImageOps
+from PIL import Image
 from flask import Flask, render_template, request
 
 from models.predict import predict
 from utils.sketch_effects import to_sketch
 from utils.disease_info import disease_info
+from utils.image_helpers import pil_to_dataurl, crop_and_resize  # ✅ 这两函数现在来自外部模块
 
 app = Flask(__name__)
 
-def pil_to_dataurl(img: Image.Image) -> str:
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    b64 = base64.b64encode(buf.getvalue()).decode("ascii")
-    return f"data:image/png;base64,{b64}"
-
-def crop_and_resize(img: Image.Image,
-                    target_ratio: float = 3/2,
-                    width: int = 600) -> Image.Image:
-    """
-    将 img 裁剪到 target_ratio（宽/高），再缩放到给定宽度。
-    """
-    w, h = img.size
-    current_ratio = w / h
-
-    # 裁剪中心区域
-    if current_ratio > target_ratio:
-        # 太宽：左右裁
-        new_w = int(h * target_ratio)
-        left = (w - new_w) // 2
-        img = img.crop((left, 0, left + new_w, h))
-    else:
-        # 太高：上下裁
-        new_h = int(w / target_ratio)
-        top = (h - new_h) // 2
-        img = img.crop((0, top, w, top + new_h))
-
-    # 缩放到目标宽度
-    new_h = int(width / target_ratio)
-    return img.resize((width, new_h), Image.LANCZOS)
-
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    return render_template("pages/index.html")
 
 @app.route("/result", methods=["POST"])
 def result():
@@ -85,12 +54,11 @@ def result():
     })
 
     return render_template(
-        "result.html",
+        "pages/result.html",
         confidence=conf_pct,
         result_src=result_src,
         info=info
     )
 
 if __name__ == "__main__":
-    # 监听 8000 端口，任意网络地址
     app.run(host="0.0.0.0", port=8000, debug=True)

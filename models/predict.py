@@ -5,7 +5,7 @@ from PIL import Image
 from torchvision import transforms
 import numpy as np
 
-from model_utils import load_model, class_names
+from models.model_utils import load_model, class_names
 
 # —— 只在模块导入时加载一次模型 —— #
 model = load_model()

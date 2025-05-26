@@ -13,3 +13,6 @@ __pycache__/
 # 日志、数据库
 *.log
 *.sqlite3
+
+__pycache__/
+*.pyc
