@@ -8,3 +8,7 @@ transformers>=4.30.0
 numpy>=1.21.0
 Pillow>=9.0.0
 opencv-python>=4.5.0
+
+
+# 测试
+pytest
