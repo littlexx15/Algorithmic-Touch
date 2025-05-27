@@ -30,21 +30,21 @@ Algorithmic Touch 是一个基于 Flask 的 Web 应用，能够：
 
 ### 克隆仓库
 
-\`\`\`bash
+```bash
 git clone https://github.com/littlexx15/Algorithmic-Touch.git
-
 cd AlgorithmicTouch
-\`\`\`
+```
+
 
 ### 安装依赖
 
-\`\`\`bash
+```bash
 python -m venv venv
 source venv/bin/activate      # macOS/Linux
 venv\Scripts\activate       # Windows
 pip install --upgrade pip
 pip install -r requirements.txt
-\`\`\`
+```
 
 ### 配置环境变量
 
@@ -52,21 +52,21 @@ pip install -r requirements.txt
 
 Mac：
 
-\`\`\`bash
+```bash
 export HF_TOKEN="你的 Hugging Face 访问令牌"
-\`\`\`
+```
 
 Windows PowerShell：
 
-\`\`\`powershell
+```bash
 $env:HF_TOKEN = "你的 Hugging Face 访问令牌"
-\`\`\`
+```
 
 ### 启动服务
 
-\`\`\`bash
+```bash
 python app.py
-\`\`\`
+```
 
 默认监听 \`0.0.0.0:8000\`，打开浏览器访问：http://localhost:8000
 
