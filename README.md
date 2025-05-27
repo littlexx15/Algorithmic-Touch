@@ -32,6 +32,7 @@ Algorithmic Touch 是一个基于 Flask 的 Web 应用，能够：
 
 \`\`\`bash
 git clone https://github.com/littlexx15/Algorithmic-Touch.git
+
 cd AlgorithmicTouch
 \`\`\`
 
