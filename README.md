@@ -12,6 +12,14 @@ Algorithmic Touch 是一个基于 Flask 的 Web 应用，能够：
 
 本项目将模型权重托管在 Hugging Face Hub，通过 `hf_hub_download` 动态获取；前端使用 p5.js 绘制柔和的背景动画，提升用户体验。
 
+## Demo
+
+<img src="./docs/screenshot-1.gif" width="45%" />  
+<img src="./docs/screenshot-2.gif" width="45%" />
+
+*左：上传界面；右：结果*
+
+
 ## 功能特性
 
 - **模型推理**：7 类皮肤病（痤疮/玫瑰痤疮、基底细胞癌等恶性病变、湿疹、药疹、性病、黑色素瘤和痣、指甲真菌等）的概率输出  
