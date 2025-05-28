@@ -12,3 +12,6 @@ opencv-python>=4.5.0
 
 # 测试
 pytest
+
+# render部署
+gunicorn
