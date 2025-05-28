@@ -17,6 +17,7 @@ Algorithmic Touch 是一个基于 Flask 的 Web 应用，能够：
 <div align="center">
 <img src="./docs/screenshot-1.gif" width="45%" />  
 <img src="./docs/screenshot-2.gif" width="45%" />
+
 *左：上传界面；右：结果*
 
 </div>
