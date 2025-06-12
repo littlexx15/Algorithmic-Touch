@@ -16,3 +16,6 @@ __pycache__/
 # Log files and databases
 *.log
 *.sqlite3
+
+# macOS Finder metadata
+.DS_Store
