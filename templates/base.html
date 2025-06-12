@@ -1,80 +1,81 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- 移动端适配，viewport-fit=cover 让全屏画布铺满刘海屏 -->
+    <!-- Mobile-friendly viewport; viewport-fit=cover lets a full-screen canvas extend under notches -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
     <title>{% block title %}Algorithmic Touch{% endblock %}</title>
 
-    <!-- Roboto Slab 字体 -->
+    <!-- Roboto Slab font -->
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
 
     <style>
-      /* —— 全局 Reset & 全屏 —— */
-      * { margin:0; padding:0; box-sizing:border-box; }
-      html, body { width:100vw; height:100vh; overflow:hidden; font-size:16px; }
-      /* —— 背景动画画布铺满 —— */
+      /* —— Global reset & full-screen setup —— */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 100vw; height: 100vh; overflow: hidden; font-size: 16px; }
+      /* —— Background animation canvas fills screen —— */
       canvas {
-        position:fixed!important; top:0; left:0;
-        width:100vw!important; height:100vh!important;
-        z-index:0; pointer-events:none; filter:blur(4px);
+        position: fixed !important;
+        top: 0; left: 0;
+        width: 100vw !important; height: 100vh !important;
+        z-index: 0; pointer-events: none; filter: blur(4px);
       }
-      /* —— 主内容区：撑满剩余空间，可滚动 —— */
+      /* —— Main content area: occupies remaining space, scrollable —— */
       #content {
-        position:relative; z-index:1;
-        display:flex; flex-direction:column;
-        align-items:center; justify-content:flex-start;
-        width:100%; height:100%; padding:2vh 2vw;
-        overflow-y:auto; color:#fff;
-        font-family:'Roboto Slab', serif;
-        background:transparent;
+        position: relative; z-index: 1;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: flex-start;
+        width: 100%; height: 100%; padding: 2vh 2vw;
+        overflow-y: auto; color: #fff;
+        font-family: 'Roboto Slab', serif;
+        background: transparent;
       }
-      /* —— 版心最大宽度 —— */
+      /* —— Max content width —— */
       .container {
-        width:100%; max-width:1200px;
+        width: 100%; max-width: 1200px;
       }
-      /* —— 标题排版 —— */
-      h1 { font-size:2.5rem; margin-bottom:1rem; }
-      h2 { font-size:1.75rem; margin-bottom:.75rem; }
-      h3 { font-size:1.25rem; margin-bottom:.5rem; }
-      p, li { font-size:1rem; line-height:1.6; }
-      /* —— 上传表单 —— */
-      form { text-align:center; margin-top:2vh; }
-      input[type="file"] { margin-bottom:1.5vh; }
+      /* —— Heading styles —— */
+      h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+      h2 { font-size: 1.75rem; margin-bottom: .75rem; }
+      h3 { font-size: 1.25rem; margin-bottom: .5rem; }
+      p, li { font-size: 1rem; line-height: 1.6; }
+      /* —— Upload form —— */
+      form { text-align: center; margin-top: 2vh; }
+      input[type="file"] { margin-bottom: 1.5vh; }
       button {
-        background:#E07A5F; color:#fff; border:none;
-        padding:.75rem 1.5rem; font-size:1rem;
-        border-radius:4px; cursor:pointer;
+        background: #E07A5F; color: #fff; border: none;
+        padding: .75rem 1.5rem; font-size: 1rem;
+        border-radius: 4px; cursor: pointer;
       }
-      button:hover { background:#C45A4B; }
-      /* —— 结果页网格 —— */
+      button:hover { background: #C45A4B; }
+      /* —— Result page grid —— */
       .grid-container {
-        display:grid; grid-template-columns:1fr 2fr;
-        gap:2vw; margin-top:3vh; width:100%;
+        display: grid; grid-template-columns: 1fr 2fr;
+        gap: 2vw; margin-top: 3vh; width: 100%;
       }
-      .full-span { grid-column:1 / -1; }
-      /* —— 图片自适应 —— */
+      .full-span { grid-column: 1 / -1; }
+      /* —— Responsive image sizing —— */
       .result {
-        width:100%; height:auto; max-height:50vh;
-        object-fit:cover; object-position:center;
+        width: 100%; height: auto; max-height: 50vh;
+        object-fit: cover; object-position: center;
       }
-      /* —— 文本区 —— */
+      /* —— Text blocks —— */
       .description, .tips-column {
-        background:transparent;
-        padding:1.5vw; border-radius:8px;
+        background: transparent;
+        padding: 1.5vw; border-radius: 8px;
       }
-      .tips-column .tips { white-space:pre-wrap; }
-      /* —— 链接回到上传页 —— */
-      a { color:#E07A5F; text-decoration:none; font-size:0.9rem; }
-      a:hover { text-decoration:underline; }
-      /* —— 小屏自动变单列 —— */
-      @media (max-width:768px) {
-        .grid-container { grid-template-columns:1fr; }
-        h1 { font-size:2rem; }
-        h2 { font-size:1.5rem; }
+      .tips-column .tips { white-space: pre-wrap; }
+      /* —— Link back to upload page —— */
+      a { color: #E07A5F; text-decoration: none; font-size: 0.9rem; }
+      a:hover { text-decoration: underline; }
+      /* —— Single column layout for small screens —— */
+      @media (max-width: 768px) {
+        .grid-container { grid-template-columns: 1fr; }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
       }
     </style>
   </head>
@@ -86,7 +87,7 @@
       </div>
     </div>
 
-    <!-- 背景动画依赖 p5.js -->
+    <!-- Background animation relies on p5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
     <script src="{{ url_for('static', filename='js/bg.js') }}"></script>
   </body>

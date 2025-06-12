@@ -5,12 +5,13 @@
   <h1>Algorithmic Touch</h1>
   <p>Please upload a skin lesion image:</p>
   <form action="/result" method="post" enctype="multipart/form-data">
-    <!-- lang="en" 强制此 input 用英文 -->
-    <input type="file" 
-    name="image" 
-    accept="image/*" 
-    required
-    lang="en"
+    {# lang="en" forces this input to use English #}
+    <input
+      type="file"
+      name="image"
+      accept="image/*"
+      required
+      lang="en"
     >
     <button type="submit">Upload</button>
   </form>

@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% block title %}结果 — Algorithmic Touch{% endblock %}
+{% block title %}Result — Algorithmic Touch{% endblock %}
 
 {% block content %}
   <h1>Algorithmic Touch</h1>
 
   <div class="grid-container">
-    <!-- 横跨整行的预览图 -->
+    <!-- Full-width preview image -->
     <img src="{{ result_src }}"
          alt="Sketch Result"
          class="result full-span">
 
-    <!-- 左侧：疾病名称＋描述 -->
+    <!-- Left: disease name + description -->
     <div class="description">
       <h2>{{ info.title }}</h2>
       <p>{{ info.description }}</p>
     </div>
 
-    <!-- 右侧：护理建议 -->
+    <!-- Right: care tips -->
     <div class="tips-column">
       <h3>Warm Care Tips:</h3>
       <div class="tips">{{ info.tips }}</div>
@@ -24,6 +24,6 @@
   </div>
 
   <p style="margin-top:2vh;">
-    <a href="{{ url_for('index') }}">← 再传一张</a>
+    <a href="{{ url_for('index') }}">← Upload another image</a>
   </p>
 {% endblock %}

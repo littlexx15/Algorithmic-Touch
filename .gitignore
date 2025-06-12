@@ -1,18 +1,18 @@
-# Python 虚拟环境
+# Project folder (remove if you don’t want to ignore the entire project)
 disease/
 
-# 缓存、编译产物
+# Python cache / compiled artifacts
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
-# Jupyter
+# Pytest cache
+.pytest_cache/
+
+# Jupyter checkpoints
 .ipynb_checkpoints/
 
-# 日志、数据库
+# Log files and databases
 *.log
 *.sqlite3
-
-__pycache__/
-*.pyc

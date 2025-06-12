@@ -5,7 +5,7 @@ from flask import Flask, render_template, request
 from models.predict import predict
 from utils.sketch_effects import to_sketch
 from utils.disease_info import disease_info
-from utils.image_helpers import pil_to_dataurl, crop_and_resize  # ✅ 这两函数现在来自外部模块
+from utils.image_helpers import pil_to_dataurl, crop_and_resize  # ✅ These two functions now come from an external module
 
 app = Flask(__name__)
 
@@ -19,15 +19,15 @@ def result():
     if not file:
         return "No image uploaded", 400
 
-    # 打开并转 RGB
+    # Open and convert to RGB
     img = Image.open(file.stream).convert("RGB")
 
-    # 预测分类
+    # Predict classification
     preds = predict(img)
     label, conf = max(preds.items(), key=lambda x: x[1])
     conf_pct = round(conf * 100)
 
-    # 生成简笔画
+    # Generate sketch effect
     sketch = to_sketch(
         img,
         low_thresh=80,
@@ -40,17 +40,17 @@ def result():
         sigma_ratio=1.0
     )
 
-    # 裁剪＋缩放到 600×400 (3:2)
+    # Crop and resize to 600×400 (3:2 aspect ratio)
     sketch = crop_and_resize(sketch, target_ratio=3/2, width=600)
 
-    # 转 DataURL
+    # Convert to Data URL for embedding
     result_src = pil_to_dataurl(sketch)
 
-    # 获取文案
+    # Retrieve text content
     info = disease_info.get(label, {
         "title":       label,
-        "description": "暂无描述。",
-        "tips":        "暂无建议。"
+        "description": "No description available.",
+        "tips":        "No tips available."
     })
 
     return render_template(

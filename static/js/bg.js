@@ -1,19 +1,20 @@
 // static/js/bg.js
 
 /** 
- * 生成一个低分辨率的离屏画布（宽高均为 windowWidth*RESOLUTION、windowHeight*RESOLUTION） 
- * 然后在离屏上跑噪声、上色，再拉伸到主画布。配合 CSS blur 效果，视觉上依然柔和。
+ * Create a low-resolution offscreen canvas (windowWidth*RESOLUTION by windowHeight*RESOLUTION),
+ * draw noise and color on it, then stretch it to the main canvas.
+ * With a CSS blur effect, the result remains soft and smooth.
  */
-const RESOLUTION = 0.1;  // 离屏画布尺寸占比 (0.1 = 10%)
-let off;                 // P5 Graphics (离屏画布)
+const RESOLUTION = 0.1;  // Offscreen canvas size ratio (10%)
+let off;                 // p5 Graphics offscreen buffer
 
 function setup() {
-  pixelDensity(1);      // 关闭 Retina 二倍像素
+  pixelDensity(1);      // Disable Retina doubling
   createCanvas(windowWidth, windowHeight);
   noStroke();
-  frameRate(15);        // 15fps 就很流畅了
+  frameRate(15);        // 15fps is smooth enough
 
-  // 初始化离屏画布
+  // Initialize offscreen buffer
   const w = max(1, floor(windowWidth * RESOLUTION));
   const h = max(1, floor(windowHeight * RESOLUTION));
   off = createGraphics(w, h);
@@ -30,7 +31,7 @@ function draw() {
   ];
   const t = millis() * 0.0002;
 
-  // 在离屏上操作像素
+  // Draw pixels on offscreen buffer
   off.loadPixels();
   for (let y = 0; y < off.height; y++) {
     for (let x = 0; x < off.width; x++) {
@@ -48,16 +49,16 @@ function draw() {
   }
   off.updatePixels();
 
-  // 拉伸到主画布
+  // Stretch to main canvas
   image(off, 0, 0, width, height);
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  // 离屏一起重算
+  // Recreate offscreen buffer on resize
   const w = max(1, floor(windowWidth * RESOLUTION));
   const h = max(1, floor(windowHeight * RESOLUTION));
-  off.remove();              // 释放旧的
+  off.remove();
   off = createGraphics(w, h);
   off.noStroke();
 }

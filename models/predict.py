@@ -1,5 +1,3 @@
-# predict.py
-
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -7,7 +5,7 @@ import numpy as np
 
 from models.model_utils import load_model, class_names
 
-# —— 只在模块导入时加载一次模型 —— #
+# —— Load the model only once when the module is imported —— #
 model = load_model()
 model.eval()
 
@@ -22,12 +20,13 @@ preprocess = transforms.Compose([
 
 def predict(img: Image.Image) -> dict[str, float]:
     """
-    输入 PIL.Image，返回每个类别的概率字典：
+    Takes a PIL.Image as input and returns a dictionary mapping
+    each class name to its probability:
       {class_name: prob, ...}
     """
-    x = preprocess(img).unsqueeze(0)  # 添加 batch 维度
+    x = preprocess(img).unsqueeze(0)  # add batch dimension
     with torch.no_grad():
         logits = model(x)
         probs = torch.softmax(logits, dim=1)[0].cpu().numpy()
-    # 返回完整映射，而不是只返回最高项
+    # Return the full mapping rather than just the top class
     return {name: float(prob) for name, prob in zip(class_names, probs)}

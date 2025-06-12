@@ -1,4 +1,3 @@
-# disease_info.py
 
 """
 Each key must exactly match the model’s output label.
